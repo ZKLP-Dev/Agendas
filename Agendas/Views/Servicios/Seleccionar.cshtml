@@ -1,0 +1,100 @@
+﻿@{
+    ViewData["Title"] = "Seleccionar servicios";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Columna izquierda: selección -->
+        <div class="col-md-7">
+            <a href="#" class="text-decoration-none mb-2 d-inline-block">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <div class="fw-bold text-uppercase text-secondary mb-1">Servicios > Equipo > Horario > Confirmar</div>
+            <h2 class="fw-bold">Seleccionar servicios</h2>
+
+            <button class="btn btn-dark rounded-pill my-3 px-4">Todos</button>
+
+            <h5 class="fw-bold">Todos los servicios</h5>
+            <div class="border border-primary rounded p-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="fw-bold">manicura</div>
+                    <div class="text-muted small">60min</div>
+                    <div class="fw-bold mt-1">$150.00</div>
+                </div>
+                <button id="toggleServicioBtn" class="btn btn-primary rounded-circle" style="width: 40px; height: 40px;">−</button>
+            </div>
+        </div>
+
+        <!-- Columna derecha: resumen -->
+        <div class="col-md-5 mt-4 mt-md-0">
+            <div class="border rounded p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-primary text-white rounded p-2 me-2 fw-bold">CY</div>
+                    <div class="fw-bold">CyG</div>
+                </div>
+
+                <div class="fw-bold mb-2">Resumen</div>
+
+                <!-- Contenido dinámico del servicio -->
+                <div id="servicioResumen">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <div>manicura</div>
+                            <div class="text-muted small">60min</div>
+                        </div>
+                        <div class="fw-bold">$150.00</div>
+                    </div>
+                    <hr />
+                </div>
+
+                <!-- Total a pagar -->
+                <div class="d-flex justify-content-between fw-bold">
+                    <span>Total a pagar:</span>
+                    <span id="total">$150.00</span>
+                </div>
+
+                <a asp-controller="Servicios" asp-action="SelectProfessional" id="continuarBtn" class="btn btn-primary w-100 mt-3">Continuar</a>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleBtn = document.getElementById('toggleServicioBtn');
+        const servicioResumen = document.getElementById('servicioResumen');
+        const continuarBtn = document.getElementById('continuarBtn');
+        const total = document.getElementById('total');
+
+        let agregado = true;
+
+        toggleBtn.addEventListener('click', function () {
+            agregado = !agregado;
+
+            if (agregado) {
+                servicioResumen.style.display = 'block';
+                continuarBtn.classList.remove('disabled');
+                continuarBtn.classList.remove('btn-secondary');
+                continuarBtn.classList.add('btn-primary');
+                continuarBtn.setAttribute('aria-disabled', 'false');
+                continuarBtn.style.pointerEvents = 'auto';
+                toggleBtn.textContent = '−';
+                total.textContent = "$150.00";
+            } else {
+                servicioResumen.style.display = 'none';
+                continuarBtn.classList.add('disabled');
+                continuarBtn.classList.remove('btn-primary');
+                continuarBtn.classList.add('btn-secondary');
+                continuarBtn.setAttribute('aria-disabled', 'true');
+                continuarBtn.style.pointerEvents = 'none';
+                toggleBtn.textContent = '+';
+                total.textContent = "$0.00";
+            }
+        });
+    });
+</script>
+

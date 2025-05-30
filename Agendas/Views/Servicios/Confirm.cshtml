@@ -1,0 +1,566 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar Reserva con Modal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="row">
+                    <!-- Columna izquierda: Formulario -->
+                    <div class="col-md-7">
+                        <!-- Reserva desplegable -->
+                        <div class="bg-white border rounded mb-4">
+                            <div class="reservation-header p-3 border-bottom cursor-pointer" onclick="toggleReservationDetails()">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h5 class="fw-bold mb-0">TU RESERVA</h5>
+                                    <i class="bi bi-chevron-up transition-transform" id="reservationArrow"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="reservation-details p-3" id="reservationDetails">
+                                <div class="row g-3">
+                                    <div class="col-6">
+                                        <div class="text-muted small">Servicios</div>
+                                        <div class="fw-semibold" id="serviceDisplay">manicura</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-muted small">Colaborador:</div>
+                                        <div class="fw-semibold" id="collaboratorDisplay">colaborador 1</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-muted small">Fecha de reserva:</div>
+                                        <div class="fw-semibold" id="dateDisplay">5 jun 2025</div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-muted small">Hora de reserva:</div>
+                                        <div class="fw-semibold" id="timeDisplay">12:00:00</div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="text-muted small">Tiempo:</div>
+                                        <div class="fw-semibold" id="durationDisplay">60 minutos</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Formulario -->
+                        <div class="bg-white border rounded p-4">
+                            <h5 class="fw-bold mb-4">Información de contacto</h5>
+                            
+                            <form id="contactForm">
+                                <!-- Nombre -->
+                                <div class="mb-3">
+                                    <label for="fullName" class="form-label">Nombre completo *</label>
+                                    <input type="text" class="form-control" id="fullName" required>
+                                    <div class="invalid-feedback">
+                                        El nombre es obligatorio
+                                    </div>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Correo electrónico *</label>
+                                    <input type="email" class="form-control" id="email" required>
+                                    <div class="invalid-feedback">
+                                        Ingresa un correo electrónico válido
+                                    </div>
+                                </div>
+
+                                <!-- País y Teléfono -->
+                                <div class="row">
+                                    <div class="col-4">
+                                        <label for="countryCode" class="form-label">País</label>
+                                        <div class="dropdown">
+                                            <button class="btn btn-outline-secondary dropdown-toggle w-100 text-start" type="button" id="countryDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <span id="selectedCountry">(+52)</span>
+                                            </button>
+                                            <ul class="dropdown-menu w-100" style="max-height: 200px; overflow-y: auto;">
+                                                <li>
+                                                    <div class="px-3 py-2">
+                                                        <input type="text" class="form-control form-control-sm" placeholder="Buscar país..." id="countrySearch" onkeyup="filterCountries()">
+                                                    </div>
+                                                </li>
+                                                <div id="countryList">
+                                                    <li><a class="dropdown-item" href="#" onclick="selectCountry('MX', '+52', 'México')">🇲🇽 México (+52)</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="selectCountry('US', '+1', 'Estados Unidos')">🇺🇸 Estados Unidos (+1)</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="selectCountry('CA', '+1', 'Canadá')">🇨🇦 Canadá (+1)</a></li>
+                                                    <li><a class="dropdown-item" href="#" onclick="selectCountry('ES', '+34', 'España')">🇪🇸 España (+34)</a></li>
+                                                </div>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="col-8">
+                                        <label for="phone" class="form-label">Teléfono celular *</label>
+                                        <input type="tel" class="form-control" id="phone" placeholder="3115452025" required>
+                                        <div class="invalid-feedback">
+                                            El teléfono es obligatorio
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Botón de envío -->
+                                <div class="mt-4">
+                                    <button type="submit" class="btn btn-primary w-100 py-3">
+                                        Confirmar Reserva
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Columna derecha: Resumen -->
+                    <div class="col-md-5 mt-4 mt-md-0">
+                        <div class="bg-white border rounded p-4">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="bg-primary text-white rounded p-2 me-2 fw-bold">CY</div>
+                                <div class="fw-bold">CyG</div>
+                            </div>
+                            <div class="fw-bold mb-3">Resumen</div>
+
+                            <!-- Service Details -->
+                            <div class="d-flex justify-content-between mb-3">
+                                <div>
+                                    <div class="fw-semibold" id="summaryService">manicura</div>
+                                    <div class="text-muted small" id="summaryDuration">60min</div>
+                                </div>
+                                <div class="fw-bold text-success" id="summaryPrice">$150.00</div>
+                            </div>
+
+                            <!-- Professional Info -->
+                            <div class="d-flex align-items-center py-3 border-top border-bottom">
+                                <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;" id="summaryProfessionalAvatar">
+                                    <small class="fw-bold">C1</small>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold" id="summaryProfessionalName">colaborador 1</div>
+                                    <small class="text-muted" id="summaryProfessionalRole">Barbero</small>
+                                </div>
+                            </div>
+
+                            <!-- Appointment Details -->
+                            <div class="py-3">
+                                <div class="d-flex align-items-center mb-2">
+                                    <i class="bi bi-calendar3 me-2 text-muted"></i>
+                                    <span id="summaryDate">5 jun 2025</span>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-clock me-2 text-muted"></i>
+                                    <span id="summaryTime">12:00:00</span>
+                                </div>
+                            </div>
+
+                            <!-- Total -->
+                            <div class="d-flex justify-content-between fw-bold border-top pt-3 mb-3">
+                                <span>Total a pagar:</span>
+                                <span id="summaryTotal">$150.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de confirmación -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" style="max-width: 480px;">
+            <div class="modal-content border-0 shadow-lg">
+                <!-- Header con botón X -->
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close" style="background-color: #4285f4; opacity: 1;">
+                        <i class="bi bi-x text-white fs-4"></i>
+                    </button>
+                </div>
+                
+                <!-- Body del modal -->
+                <div class="modal-body px-4 pt-0 pb-4">
+                    <!-- Título principal -->
+                    <div class="text-center mb-4">
+                        <h3 class="fw-bold text-dark mb-3">¡RESERVADO!</h3>
+                        
+                        <!-- Fecha y hora -->
+                        <div class="mb-2">
+                            <span class="fw-bold fs-5" id="modalDate">5 jun 2025</span>
+                            <span class="fw-bold fs-5" id="modalTime"> a las 12:00:00</span>
+                        </div>
+                        
+                        <!-- Duración -->
+                        <div class="text-muted mb-4">
+                            <span id="modalDuration">60 min de duración</span>, termina a las <span id="modalEndTime">13:00</span>
+                        </div>
+                    </div>
+
+                    <!-- Información del negocio -->
+                    <div class="text-center mb-4">
+                        <h4 class="fw-bold text-dark">CyG</h4>
+                    </div>
+
+                    <!-- Detalles del servicio -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <div class="fw-bold" id="modalService">manicura</div>
+                            <div class="text-muted small">
+                                Colaborador: <span id="modalCollaborator">colaborador 1</span>
+                            </div>
+                            <div class="text-muted small" id="modalServiceDuration">60min</div>
+                        </div>
+                        <div class="fw-bold text-success" id="modalPrice">$150.00</div>
+                    </div>
+
+                    <!-- Botones de acción -->
+                    <div class="d-grid gap-2 mb-3">
+                        <!-- Botón añadir nota -->
+                        <button class="btn btn-light border d-flex align-items-center justify-content-between p-3">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary text-white rounded p-2 me-3">
+                                    <i class="bi bi-file-text"></i>
+                                </div>
+                                <span class="text-primary fw-medium">Añadir nota a la reserva</span>
+                            </div>
+                            <i class="bi bi-chevron-right text-muted"></i>
+                        </button>
+                        
+                        <!-- Botón añadir al calendario -->
+                        <button class="btn btn-outline-secondary d-flex align-items-center justify-content-center p-3">
+                            <i class="bi bi-calendar3 me-2"></i>
+                            <span>Añadir al calendario</span>
+                        </button>
+                    </div>
+
+                    <!-- Política de cancelación -->
+                    <div class="mt-4">
+                        <h6 class="fw-bold text-dark mb-2">Política de cancelación</h6>
+                        <p class="text-muted small mb-0">
+                            Importante debes llegar con (10) minutos de anticipación a tu cita. Pasados (10) 
+                            minutos después de la hora elegida para tu reserva está será cancelada y entraras a 
+                            lista de espera.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .cursor-pointer {
+            cursor: pointer;
+        }
+
+        .reservation-header:hover {
+            background-color: #f8f9fa;
+        }
+
+        .transition-transform {
+            transition: transform 0.3s ease;
+        }
+
+        .transition-transform.rotated {
+            transform: rotate(180deg);
+        }
+
+        .reservation-details {
+            transition: all 0.3s ease;
+        }
+
+        .reservation-details.collapsed {
+            display: none !important;
+        }
+
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+
+        .dropdown-menu {
+            border: 1px solid #dee2e6;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .is-invalid {
+            border-color: #dc3545;
+        }
+
+        .invalid-feedback {
+            display: none;
+            width: 100%;
+            margin-top: 0.25rem;
+            font-size: 0.875em;
+            color: #dc3545;
+        }
+
+        .is-invalid ~ .invalid-feedback {
+            display: block;
+        }
+
+        /* Estilos para el modal */
+        .modal-content {
+            border-radius: 16px;
+        }
+
+        .btn-close {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+        }
+
+        .btn-close:focus {
+            box-shadow: none;
+        }
+
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        #confirmationModal .btn {
+            border-radius: 12px;
+        }
+
+        #confirmationModal .btn-light {
+            background-color: #f8f9fa;
+            border-color: #e9ecef;
+        }
+
+        #confirmationModal .btn-light:hover {
+            background-color: #e9ecef;
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Variables
+            let selectedCountryCode = '+52';
+            let selectedCountryName = 'México';
+            let isReservationExpanded = true;
+
+            // Datos de ejemplo de la reserva
+            const reservationData = {
+                service: 'manicura',
+                professional: 'colaborador 1',
+                professionalAvatar: 'C1',
+                professionalRole: 'Especialista en uñas',
+                date: '5 jun 2025',
+                time: '12:00:00',
+                duration: 60,
+                price: 150,
+                endTime: '13:00'
+            };
+
+            // Cargar datos iniciales
+            loadReservationData();
+
+            function loadReservationData() {
+                const bookingData = sessionStorage.getItem('bookingData');
+                if (!bookingDataStr) {
+                alert('No hay datos de reserva. Por favor selecciona un servicio primero.');
+                window.location.href = '/Servicios/Agenda'; // O la página que corresponda
+                return;
+            
+                // Actualizar desplegable de reserva
+                document.getElementById('serviceDisplay').textContent = reservationData.service;
+                document.getElementById('collaboratorDisplay').textContent = reservationData.professional;
+                document.getElementById('dateDisplay').textContent = reservationData.date;
+                document.getElementById('timeDisplay').textContent = reservationData.time;
+                document.getElementById('durationDisplay').textContent = `${reservationData.duration} minutos`;
+                
+                // Actualizar resumen
+                document.getElementById('summaryService').textContent = reservationData.service;
+                document.getElementById('summaryDuration').textContent = `${reservationData.duration}min`;
+                document.getElementById('summaryPrice').textContent = `$${reservationData.price}.00`;
+                document.getElementById('summaryProfessionalAvatar').innerHTML = `<small class="fw-bold">${reservationData.professionalAvatar}</small>`;
+                document.getElementById('summaryProfessionalName').textContent = reservationData.professional;
+                document.getElementById('summaryProfessionalRole').textContent = reservationData.professionalRole;
+                document.getElementById('summaryDate').textContent = reservationData.date;
+                document.getElementById('summaryTime').textContent = reservationData.time;
+                document.getElementById('summaryTotal').textContent = `$${reservationData.price}.00`;
+
+                // Actualizar modal
+                document.getElementById('modalDate').textContent = reservationData.date;
+                document.getElementById('modalTime').textContent = ` a las ${reservationData.time}`;
+                document.getElementById('modalDuration').textContent = `${reservationData.duration} min de duración`;
+                document.getElementById('modalEndTime').textContent = reservationData.endTime;
+                document.getElementById('modalService').textContent = reservationData.service;
+                document.getElementById('modalCollaborator').textContent = reservationData.professional;
+                document.getElementById('modalServiceDuration').textContent = `${reservationData.duration}min`;
+                document.getElementById('modalPrice').textContent = `$${reservationData.price}.00`;
+            }
+
+            // Toggle reserva desplegable
+            window.toggleReservationDetails = function() {
+                const details = document.getElementById('reservationDetails');
+                const arrow = document.getElementById('reservationArrow');
+                
+                if (isReservationExpanded) {
+                    details.classList.add('collapsed');
+                    arrow.classList.add('rotated');
+                    isReservationExpanded = false;
+                } else {
+                    details.classList.remove('collapsed');
+                    arrow.classList.remove('rotated');
+                    isReservationExpanded = true;
+                }
+            };
+
+            // Seleccionar país
+            window.selectCountry = function(code, dialCode, name) {
+                selectedCountryCode = dialCode;
+                selectedCountryName = name;
+                document.getElementById('selectedCountry').textContent = dialCode;
+                
+                // Cerrar dropdown
+                const dropdown = bootstrap.Dropdown.getInstance(document.getElementById('countryDropdown'));
+                if (dropdown) {
+                    dropdown.hide();
+                }
+            };
+
+            // Filtrar países
+            window.filterCountries = function() {
+                const searchValue = document.getElementById('countrySearch').value.toLowerCase();
+                const countryItems = document.querySelectorAll('#countryList .dropdown-item');
+                
+                countryItems.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(searchValue)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            };
+
+            // Validación del formulario
+            document.getElementById('contactForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const fullName = document.getElementById('fullName');
+                const email = document.getElementById('email');
+                const phone = document.getElementById('phone');
+                
+                let isValid = true;
+
+                // Validar nombre
+                if (!fullName.value.trim()) {
+                    fullName.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    fullName.classList.remove('is-invalid');
+                }
+
+                // Validar teléfono
+                if (!phone.value.trim()) {
+                    phone.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    phone.classList.remove('is-invalid');
+                }
+
+                if (isValid) {
+                    // Opción 1: Solo mostrar modal (sin envío al servidor)
+                    showConfirmationModal();
+                    
+                    // Opción 2: Simular guardado y mostrar modal
+                    // simulateReservationSave();
+                    
+                    // Opción 3: Enviar a endpoint que solo devuelve éxito
+                    // sendToTempEndpoint();
+                } else {
+                    // Scroll al primer campo con error
+                    const firstError = document.querySelector('.is-invalid');
+                    if (firstError) {
+                        firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        firstError.focus();
+                    }
+                }
+            });
+
+            // Función para mostrar el modal
+            function showConfirmationModal() {
+                const confirmationModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+                confirmationModal.show();
+            }
+
+            // Función para simular guardado de reserva
+            function simulateReservationSave() {
+                // Recopilar datos del formulario
+                const fullReservationData = {
+                    customer: {
+                        fullName: document.getElementById('fullName').value.trim(),
+                        email: document.getElementById('email').value.trim(),
+                        phone: selectedCountryCode + document.getElementById('phone').value.trim(),
+                        country: selectedCountryName
+                    },
+                    service: reservationData.service,
+                    professional: reservationData.professional,
+                    professionalRole: reservationData.professionalRole,
+                    date: reservationData.date,
+                    time: reservationData.time,
+                    duration: reservationData.duration,
+                    price: reservationData.price
+                };
+
+                // Simular delay de guardado
+                console.log('Guardando reserva (simulado):', fullReservationData);
+                
+                // Simular respuesta exitosa después de 1 segundo
+                setTimeout(() => {
+                    showConfirmationModal();
+                }, 1000);
+            }
+
+            // Función para enviar a endpoint temporal
+            function sendToTempEndpoint() {
+                const formData = {
+                    fullName: document.getElementById('fullName').value.trim(),
+                    email: document.getElementById('email').value.trim(),
+                    phone: selectedCountryCode + document.getElementById('phone').value.trim(),
+                    country: selectedCountryName
+                };
+
+                // Llamada AJAX simple que solo devuelve éxito
+                fetch('/Reservas/ConfirmarTemporal', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => {
+                    if (response.ok) {
+                        showConfirmationModal();
+                    } else {
+                        alert('Error al procesar la reserva');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // Mostrar modal de cualquier manera para testing
+                    showConfirmationModal();
+                });
+            }
+
+            // Limpiar validación cuando el usuario empiece a escribir
+            document.querySelectorAll('.form-control').forEach(input => {
+                input.addEventListener('input', function() {
+                    this.classList.remove('is-invalid');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

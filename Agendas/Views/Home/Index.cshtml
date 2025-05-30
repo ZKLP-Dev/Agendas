@@ -1,0 +1,156 @@
+﻿@{
+    ViewData["Title"] = "SRV Citas";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    :root {
+        --primary-color: #0250b2;
+        --secondary-color: #ffffff;
+    }
+
+    .bg-primary-custom {
+        background-color: var(--primary-color) !important;
+        color: var(--secondary-color) !important;
+    }
+
+    .text-primary-custom {
+        color: var(--primary-color) !important;
+    }
+
+    .btn-primary-custom {
+        background-color: var(--primary-color);
+        color: var(--secondary-color);
+        border: none;
+    }
+
+        .btn-primary-custom:hover {
+            background-color: #013a85;
+            color: var(--secondary-color);
+        }
+
+    .card-custom {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(2, 80, 178, 0.1);
+    }
+
+    h1, h2, h3, h4, h5 {
+        color: var(--primary-color);
+    }
+</style>
+
+<div class="container mt-5">
+
+    <!-- Encabezado -->
+    <div class="d-flex flex-column flex-md-row align-items-center justify-content-between mb-4 p-4 bg-primary-custom rounded shadow">
+        <img src="https://via.placeholder.com/80" alt="Logo" class="rounded mb-3 mb-md-0 bg-white p-2" />
+        <h1 class="text-center flex-fill text-white mb-0">SRV Citas</h1>
+    </div>
+
+    <!-- Puestos -->
+    <div class="mt-5">
+        <h3 class="fw-bold mb-4">Puestos disponibles</h3>
+
+        <div class="row g-4">
+            @for (int i = 1; i <= 5; i++)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card card-custom h-100 shadow-sm">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Puesto @i</h5>
+                            <div class="text-warning mb-1">★★★★☆</div>
+                            <p class="text-muted mb-1">Horario: 10:00 AM - 7:00 PM</p>
+                            <a href="/Servicios/Seleccionar?puesto=@i" class="btn btn-primary-custom mt-2">Reservar</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Información general -->
+    <div class="mt-5">
+        <h4 class="fw-bold">Dirección</h4>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <p class="mb-0">Zapopan (Jalisco), México</p>
+                <a href="#" class="text-decoration-underline text-primary-custom">Ver en mapa</a>
+            </div>
+            <img src="https://via.placeholder.com/100" class="rounded shadow-sm" alt="Mapa" />
+        </div>
+    </div>
+
+    <!-- Horarios -->
+    <div class="mt-4">
+        <h4 class="fw-bold">Horarios</h4>
+        <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-clock me-2 text-primary-custom"></i>
+            <button class="btn btn-link text-decoration-none p-0 d-flex align-items-center"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#horarioCollapse"
+                    aria-controls="horarioCollapse">
+                <span class="text-primary-custom">Abierto hoy 10:00 AM - 07:00 PM</span>
+                <i class="bi bi-chevron-down ms-2 text-primary-custom" id="flechaHorario"></i>
+            </button>
+        </div>
+
+        <div class="collapse" id="horarioCollapse">
+            <table class="table table-sm table-bordered">
+                <thead class="fw-bold bg-light">
+                    <tr><th>Día</th><th>Apertura</th><th>Cierre</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Lunes</td><td>10:00</td><td>19:00</td></tr>
+                    <tr><td>Martes</td><td>10:00</td><td>19:00</td></tr>
+                    <tr><td>Miércoles</td><td>10:00</td><td>19:00</td></tr>
+                    <tr><td>Jueves</td><td>10:00</td><td>19:00</td></tr>
+                    <tr><td>Viernes</td><td>10:00</td><td>19:00</td></tr>
+                    <tr><td>Sábado</td><td>10:00</td><td>17:00</td></tr>
+                    <tr><td>Domingo</td><td colspan="2" class="text-center">Cerrado</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Comentarios -->
+    <div class="mt-5">
+        <h4 class="fw-bold">Comentarios</h4>
+        <div class="text-warning">★★★★★</div>
+        <small>0 comentarios</small>
+
+        <h6 class="mt-3">Filtrar por puntuación</h6>
+        <div>★★★★★</div>
+        <div>★★★★☆</div>
+        <div>★★★☆☆</div>
+        <div>★★☆☆☆</div>
+        <div>★☆☆☆☆</div>
+
+        <div class="alert alert-success mt-4" role="alert">
+            ✅ Reseñas en las que puede confiar
+            <br />
+            Todas nuestras valoraciones son de clientes auténticos, tras visitas verificadas.
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const horarioCollapse = document.getElementById('horarioCollapse');
+        const flecha = document.getElementById('flechaHorario');
+
+        if (horarioCollapse && flecha) {
+            horarioCollapse.addEventListener('show.bs.collapse', () => {
+                flecha.classList.remove('bi-chevron-down');
+                flecha.classList.add('bi-chevron-up');
+            });
+
+            horarioCollapse.addEventListener('hide.bs.collapse', () => {
+                flecha.classList.remove('bi-chevron-up');
+                flecha.classList.add('bi-chevron-down');
+            });
+        }
+    });
+</script>

@@ -1,0 +1,468 @@
+﻿@{
+    ViewData["Title"] = "Seleccionar Horario";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<div class="container mt-4">
+    <div class="row">
+        <!-- Columna izquierda: selección de horario -->
+        <div class="col-md-7">
+            <a href="/Servicios/SelectProfessional" class="text-decoration-none mb-2 d-inline-block">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <div class="fw-bold text-uppercase text-secondary mb-1">Servicios > Equipo > Horario > Confirmar</div>
+            <h2 class="fw-bold mb-4">Seleccionar horario</h2>
+
+            <!-- Calendar -->
+            <div class="bg-white border rounded p-4 mb-4">
+                <!-- Month Selector -->
+                <div class="month-selector mb-4">
+                    <div class="d-flex align-items-center justify-content-center">
+                        <button type="button" class="btn btn-primary rounded-circle me-3" onclick="changeMonth(-1)" style="width: 40px; height: 40px;">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+
+                        <div class="month-dropdown text-center">
+                            <div class="month-header d-flex align-items-center justify-content-center cursor-pointer" onclick="toggleMonthDropdown()">
+                                <span class="fw-bold text-primary me-2 fs-4" id="currentMonthTitle">Mayo 2025</span>
+                                <i class="bi bi-chevron-down text-primary transition-transform" id="monthArrow"></i>
+                            </div>
+
+                            <!-- Days Container (Initially Hidden) -->
+                            <div class="days-container mt-3" id="daysContainer" style="display: none;">
+                                <div class="d-flex gap-2 flex-wrap justify-content-center" id="monthDays"></div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-primary rounded-circle ms-3" onclick="changeMonth(1)" style="width: 40px; height: 40px;">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Time Selection -->
+            <div class="bg-white border rounded p-4">
+                <h5 class="fw-bold mb-4">Horas disponibles:</h5>
+
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <h6 class="fw-semibold text-center mb-3">MAÑANA</h6>
+                        <div class="d-grid gap-2" id="morningSlots">
+                            <button class="btn btn-outline-secondary time-slot" onclick="selectTime(this, '10:00')">10:00</button>
+                            <button class="btn btn-outline-secondary time-slot" onclick="selectTime(this, '11:00')">11:00</button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <h6 class="fw-semibold text-center mb-3">TARDE</h6>
+                        <div class="d-grid gap-2" id="afternoonSlots">
+                            <button class="btn btn-outline-secondary time-slot" onclick="selectTime(this, '12:00')">12:00</button>
+                            <button class="btn btn-outline-secondary time-slot" onclick="selectTime(this, '13:00')">13:00</button>
+                            <button class="btn btn-primary time-slot active" onclick="selectTime(this, '14:00')">14:00</button>
+                            <button class="btn btn-outline-secondary time-slot" onclick="selectTime(this, '15:00')">15:00</button>
+                            <button class="btn btn-outline-secondary time-slot" onclick="selectTime(this, '16:00')">16:00</button>
+                            <button class="btn btn-outline-secondary time-slot" onclick="selectTime(this, '17:00')">17:00</button>
+                            <button class="btn btn-outline-secondary time-slot" onclick="selectTime(this, '18:00')">18:00</button>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <h6 class="fw-semibold text-center mb-3">NOCHE</h6>
+                        <div class="text-center text-muted fst-italic py-4">
+                            Sin horas para reservar
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna derecha: resumen -->
+        <div class="col-md-5 mt-4 mt-md-0">
+            <div class="border rounded p-4">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-primary text-white rounded p-2 me-2 fw-bold">CY</div>
+                    <div class="fw-bold">CyG</div>
+                </div>
+                <div class="fw-bold mb-3">Resumen</div>
+
+                <!-- Service Details -->
+                <div class="d-flex justify-content-between mb-3">
+                    <div>
+                        <div class="fw-semibold">manicura</div>
+                        <div class="text-muted small">60min</div>
+                    </div>
+                    <div class="fw-bold text-success">$150.00</div>
+                </div>
+
+                <!-- Professional Info -->
+                <div class="d-flex align-items-center py-3 border-top border-bottom">
+                    <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;" id="professionalAvatarDisplay">
+                        <small class="fw-bold">C1</small>
+                    </div>
+                    <div>
+                        <div class="fw-semibold" id="professionalNameDisplay">colaborador 1</div>
+                        <small class="text-muted" id="professionalRoleDisplay">Barbero</small>
+                    </div>
+                </div>
+
+                <!-- Appointment Details -->
+                <div class="py-3">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="bi bi-calendar3 me-2 text-muted"></i>
+                        <span id="selectedDate">2025-05-29</span>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-clock me-2 text-muted"></i>
+                        <span id="selectedTime">2:00 PM</span>
+                    </div>
+                </div>
+
+                <!-- Total -->
+                <div class="d-flex justify-content-between fw-bold border-top pt-3 mb-3">
+                    <span>Total a pagar:</span>
+                    <span>$150.00</span>
+                </div>
+
+                <button class="btn btn-primary w-100" onclick="continueBooking()">Continuar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .cursor-pointer {
+        cursor: pointer;
+    }
+
+    .month-header:hover {
+        opacity: 0.8;
+    }
+
+    .transition-transform {
+        transition: transform 0.3s ease;
+    }
+
+        .transition-transform.rotated {
+            transform: rotate(180deg);
+        }
+
+    .days-container {
+        animation: slideDown 0.3s ease-out;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+        .days-container.hiding {
+            animation: slideUp 0.3s ease-out;
+        }
+
+    .day-btn {
+        width: 60px;
+        height: 60px;
+        border: 1px solid #dee2e6;
+        background: white;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        text-decoration: none;
+        color: inherit;
+        margin: 2px;
+    }
+
+        .day-btn:hover {
+            border-color: #0d6efd;
+            background: #f8f9ff;
+            color: inherit;
+            text-decoration: none;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .day-btn.selected {
+            background: #0d6efd;
+            color: white;
+            border-color: #0d6efd;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+        }
+
+        .day-btn.disabled {
+            background: #f8f9fa;
+            color: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+            .day-btn.disabled:hover {
+                transform: none;
+                box-shadow: none;
+            }
+
+    .day-name {
+        font-size: 0.7rem;
+        font-weight: 500;
+        text-transform: uppercase;
+    }
+
+    .day-number {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .time-slot.active {
+        background-color: #0d6efd !important;
+        border-color: #0d6efd !important;
+        color: white !important;
+    }
+
+    .time-slot:disabled {
+        background-color: #f8f9fa !important;
+        border-color: #dee2e6 !important;
+        color: #6c757d !important;
+        cursor: not-allowed;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Recuperar datos del profesional desde sessionStorage
+        const selectedProfessionalData = sessionStorage.getItem('selectedProfessional');
+        if (selectedProfessionalData) {
+            const professional = JSON.parse(selectedProfessionalData);
+            updateProfessionalDisplay(professional);
+        }
+
+        // Calendar data
+        let currentMonth = 4; // Mayo (0-based)
+        let currentYear = 2025;
+        let selectedDate = new Date(2025, 4, 29); // May 29, 2025 (default selection)
+        let selectedTime = '14:00';
+        let isDropdownOpen = false;
+
+        const months = [
+            'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+        ];
+
+        const dayNames = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+
+        // Función para actualizar la información del profesional en el resumen
+        function updateProfessionalDisplay(professional) {
+            document.getElementById('professionalAvatarDisplay').innerHTML = `<small class="fw-bold">${professional.avatar}</small>`;
+            document.getElementById('professionalNameDisplay').textContent = professional.name;
+            document.getElementById('professionalRoleDisplay').textContent = professional.role;
+        }
+
+        // Toggle month dropdown
+        window.toggleMonthDropdown = function() {
+            const daysContainer = document.getElementById('daysContainer');
+            const arrow = document.getElementById('monthArrow');
+
+            if (isDropdownOpen) {
+                // Hide dropdown
+                daysContainer.classList.add('hiding');
+                setTimeout(() => {
+                    daysContainer.style.display = 'none';
+                    daysContainer.classList.remove('hiding');
+                }, 300);
+                arrow.classList.remove('rotated');
+                isDropdownOpen = false;
+            } else {
+                // Show dropdown
+                renderMonthDays();
+                daysContainer.style.display = 'block';
+                arrow.classList.add('rotated');
+                isDropdownOpen = true;
+            }
+        };
+
+        // Initialize calendar
+        function initCalendar() {
+            updateMonthTitle();
+        }
+
+        function updateMonthTitle() {
+            document.getElementById('currentMonthTitle').textContent = `${months[currentMonth]} ${currentYear}`;
+        }
+
+        function renderMonthDays() {
+            const container = document.getElementById('monthDays');
+            container.innerHTML = '';
+
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(currentYear, currentMonth, day);
+                const dayOfWeek = date.getDay();
+
+                const dayBtn = document.createElement('div');
+                dayBtn.className = 'day-btn';
+                dayBtn.onclick = () => selectDate(date);
+
+                // Check if this is the selected date
+                if (selectedDate &&
+                    date.getFullYear() === selectedDate.getFullYear() &&
+                    date.getMonth() === selectedDate.getMonth() &&
+                    date.getDate() === selectedDate.getDate()) {
+                    dayBtn.classList.add('selected');
+                }
+
+                // Check if date is in the past
+                if (date < today) {
+                    dayBtn.classList.add('disabled');
+                    dayBtn.onclick = null;
+                }
+
+                dayBtn.innerHTML = `
+                    <div class="day-name">${dayNames[dayOfWeek]}</div>
+                    <div class="day-number">${day}</div>
+                `;
+
+                container.appendChild(dayBtn);
+            }
+        }
+
+        window.selectDate = function(date) {
+            if (date < new Date().setHours(0,0,0,0)) return;
+
+            // Remove previous selection
+            document.querySelectorAll('.day-btn.selected').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+
+            selectedDate = date;
+
+            // Update selected date display in summary
+            const options = {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit'
+            };
+            const dateStr = date.toLocaleDateString('es-MX', options).split('/').reverse().join('-');
+            document.getElementById('selectedDate').textContent = dateStr;
+
+            // Re-render days to show selection
+            if (isDropdownOpen) {
+                renderMonthDays();
+            }
+
+            // Update available times based on selected date
+            updateAvailableTimes(date);
+
+            // Close dropdown after selection
+            setTimeout(() => {
+                if (isDropdownOpen) {
+                    toggleMonthDropdown();
+                }
+            }, 500);
+        };
+
+        function updateAvailableTimes(date) {
+            const dayOfWeek = date.getDay();
+
+            // Clear all disabled states first
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.disabled = false;
+                slot.classList.remove('btn-secondary');
+                if (!slot.classList.contains('active')) {
+                    slot.classList.add('btn-outline-secondary');
+                }
+            });
+
+            // Simulate some slots being unavailable on certain days
+            if (dayOfWeek === 0 || dayOfWeek === 6) { // Weekends
+                document.querySelectorAll('#morningSlots .time-slot').forEach(slot => {
+                    slot.disabled = true;
+                    slot.classList.remove('btn-outline-secondary');
+                    slot.classList.add('btn-secondary');
+                });
+            }
+        }
+
+        window.selectTime = function(element, time) {
+            if (element.disabled) return;
+
+            // Remove previous selection
+            document.querySelectorAll('.time-slot.active').forEach(slot => {
+                slot.classList.remove('active', 'btn-primary');
+                slot.classList.add('btn-outline-secondary');
+            });
+
+            // Add selection to clicked slot
+            element.classList.remove('btn-outline-secondary');
+            element.classList.add('active', 'btn-primary');
+            selectedTime = time;
+
+            // Update display in summary
+            const time12 = convertTo12Hour(time);
+            document.getElementById('selectedTime').textContent = time12;
+        };
+
+        function convertTo12Hour(time24) {
+            const [hours, minutes] = time24.split(':');
+            const hour12 = hours % 12 || 12;
+            const ampm = hours < 12 ? 'AM' : 'PM';
+            return `${hour12}:${minutes} ${ampm}`;
+        }
+
+        window.changeMonth = function(direction) {
+            currentMonth += direction;
+
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+
+            updateMonthTitle();
+
+            // If dropdown is open, update the days
+            if (isDropdownOpen) {
+                renderMonthDays();
+            }
+        };
+
+        window.continueBooking = function() {
+            if (!selectedDate || !selectedTime) {
+                alert('Por favor selecciona una fecha y hora');
+                return;
+            }
+
+            // Recuperar datos del profesional
+            const selectedProfessionalData = sessionStorage.getItem('selectedProfessional');
+            const professional = selectedProfessionalData ? JSON.parse(selectedProfessionalData) : null;
+
+            const bookingData = {
+                service: 'manicura',
+                professional: professional ? professional.name : 'colaborador 1',
+                professionalId: professional ? professional.id : null,
+                professionalRole: professional ? professional.role : 'Barbero',
+                professionalAvatar: professional ? professional.avatar : 'C1',
+                date: selectedDate.toISOString().split('T')[0],
+                time: selectedTime,
+                duration: 60,
+                price: 150.00
+            };
+
+            console.log('Booking data:', bookingData);
+
+            // Guardar todos los datos de la reserva para la siguiente página
+            sessionStorage.setItem('bookingData', JSON.stringify(bookingData));
+
+            // Redirect to confirmation page
+            window.location.href = '/Servicios/Confirm';
+        };
+
+        // Initialize on page load
+        initCalendar();
+    });
+</script>

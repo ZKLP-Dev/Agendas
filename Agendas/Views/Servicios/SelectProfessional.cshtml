@@ -1,0 +1,321 @@
+﻿@using Agendas.Models
+@{
+    ViewData["Title"] = "Seleccionar Profesional";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model List<Professional>
+
+<div class="container-fluid px-4">
+    <div class="row">
+        <!-- Columna izquierda - Lista de profesionales -->
+        <div class="col-md-8">
+            <h2 class="mb-4 fw-bold">Selecciona a un profesional del equipo</h2>
+
+            <div class="row g-3" id="professionalsGrid">
+                @foreach (var prof in Model)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="professional-item" onclick="selectProfessional(@prof.Id, '@prof.Name', '@prof.Role', '@prof.Avatar')" data-id="@prof.Id">
+                            <div class="professional-avatar-container">
+                                <div class="professional-avatar">@prof.Avatar</div>
+                                <div class="rating-badge">
+                                    <i class="bi bi-star-fill"></i>
+                                    <span>@prof.Rating</span>
+                                </div>
+                            </div>
+                            <div class="professional-info">
+                                <h6 class="professional-name">@prof.Name</h6>
+                                <p class="professional-role">@prof.Role</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Columna derecha - Resumen -->
+        <div class="col-md-4">
+            <div class="booking-summary">
+                <div class="summary-header">
+                    <div class="service-icon">
+                        <span>CY</span>
+                    </div>
+                    <h5>Resumen</h5>
+                </div>
+
+                <div class="service-details">
+                    <div class="service-item">
+                        <span class="service-name">manicura</span>
+                        <span class="service-price">$ 150</span>
+                    </div>
+                    <div class="service-duration">60min</div>
+                </div>
+
+                <div class="selected-professional" id="selectedProfessionalSummary" style="display: none;">
+                    <div class="professional-summary">
+                        <div class="prof-avatar-small" id="selectedAvatar"></div>
+                        <div class="prof-details">
+                            <span class="prof-name" id="selectedName"></span>
+                            <span class="prof-role" id="selectedRole"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-3">
+
+                <div class="total-section">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <strong>Total a pagar:</strong>
+                        <strong>$ 150</strong>
+                    </div>
+                </div>
+
+                <button class="btn-continue" id="continueBtn" disabled>
+                    Continuar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .professional-item {
+        border: 2px solid #e9ecef;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: white;
+        position: relative;
+    }
+
+        .professional-item:hover {
+            border-color: #007bff;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .professional-item.selected {
+            border-color: #007bff;
+            background: #f8f9ff;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
+        }
+
+    .professional-avatar-container {
+        position: relative;
+        display: inline-block;
+        margin-bottom: 12px;
+    }
+
+    .professional-avatar {
+        width: 80px;
+        height: 80px;
+        background: #e9ecef;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
+        font-weight: bold;
+        color: #6c757d;
+        margin: 0 auto;
+    }
+
+    .rating-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #ffc107;
+        color: white;
+        border-radius: 12px;
+        padding: 2px 6px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+    }
+
+        .rating-badge i {
+            font-size: 10px;
+        }
+
+    .professional-name {
+        font-weight: 600;
+        margin-bottom: 4px;
+        color: #212529;
+    }
+
+    .professional-role {
+        color: #6c757d;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .booking-summary {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 20px;
+    }
+
+    .summary-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .service-icon {
+        width: 60px;
+        height: 60px;
+        background: #007bff;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+        margin: 0 auto 12px;
+    }
+
+    .service-details {
+        margin-bottom: 20px;
+    }
+
+    .service-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 4px;
+    }
+
+    .service-name {
+        font-weight: 500;
+    }
+
+    .service-price {
+        font-weight: 600;
+        color: #212529;
+    }
+
+    .service-duration {
+        color: #6c757d;
+        font-size: 14px;
+    }
+
+    .professional-summary {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin: 16px 0;
+    }
+
+    .prof-avatar-small {
+        width: 40px;
+        height: 40px;
+        background: #e9ecef;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        font-weight: bold;
+        color: #6c757d;
+    }
+
+    .prof-details {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .prof-name {
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .prof-role {
+        color: #6c757d;
+        font-size: 12px;
+    }
+
+    .total-section {
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    .btn-continue {
+        width: 100%;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+        .btn-continue:hover:not(:disabled) {
+            background: #0056b3;
+        }
+
+        .btn-continue:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+
+</style>
+
+<script>
+    let selectedProfessional = {
+        id: null,
+        name: '',
+        role: '',
+        avatar: ''
+    };
+
+    function selectProfessional(professionalId, name, role, avatar) {
+        // Remover selección anterior
+        document.querySelectorAll('.professional-item').forEach(item => {
+            item.classList.remove('selected');
+        });
+
+        // Seleccionar nuevo profesional
+        const selectedItem = document.querySelector(`[data-id="${professionalId}"]`);
+        selectedItem.classList.add('selected');
+
+        // Guardar datos del profesional seleccionado
+        selectedProfessional = {
+            id: professionalId,
+            name: name,
+            role: role,
+            avatar: avatar
+        };
+
+        // Actualizar resumen
+        document.getElementById('selectedAvatar').textContent = avatar;
+        document.getElementById('selectedName').textContent = name;
+        document.getElementById('selectedRole').textContent = role;
+        document.getElementById('selectedProfessionalSummary').style.display = 'block';
+
+        // Habilitar botón continuar
+        document.getElementById('continueBtn').disabled = false;
+    }
+
+    // Manejar clic en continuar
+    document.getElementById('continueBtn').addEventListener('click', function() {
+        if (selectedProfessional.id) {
+            // Guardar datos en sessionStorage para pasarlos a la siguiente página
+            sessionStorage.setItem('selectedProfessional', JSON.stringify(selectedProfessional));
+
+            // Redirigir a la página de selección de horario
+            window.location.href = `/Servicios/Agenda?professionalId=${selectedProfessional.id}`;
+        }
+    });
+</script>
